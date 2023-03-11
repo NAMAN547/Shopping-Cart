@@ -10,8 +10,15 @@ const productSchema = new mongoose.Schema({
 
     desc: String,
 
-    img: String
+    img: String,
 
+    review: [
+
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Review"
+        }
+    ]
 })
 
 

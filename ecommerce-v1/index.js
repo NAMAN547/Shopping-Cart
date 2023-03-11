@@ -9,7 +9,11 @@ const methodOverride = require("method-override");
 
 
 // All Product Routes
-const productRouter = require("./routes/productRoutes")
+const productRouter = require("./routes/productRoutes");
+
+//Review Routes
+
+const reviewRouter = require("./routes/reviewRoutes")
 
 
 // Middlewares
@@ -33,7 +37,10 @@ app.get("/", (req,res)=>{
 })
 
 
+
+// Routers
 app.use( productRouter);  // using router
+app.use(reviewRouter);
 
 
 

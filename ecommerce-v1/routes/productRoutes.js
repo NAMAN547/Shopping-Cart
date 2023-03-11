@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
+const Review = require("../models/Review")
 
 
 // get all products
@@ -13,7 +14,6 @@ router.get("/products", async(req,res)=>{
 })
 
 
-
 // get forms to create a new product
 router.get("/products/new", async(req,res)=>{
 
@@ -22,13 +22,12 @@ router.get("/products/new", async(req,res)=>{
  })
 
 
-
  //create a new product
  router.post("/products", async(req,res)=>{
 
     const {name , img , desc , price} = req.body;
 
-     await Product.create({name , img , desc , price});
+    await Product.create({name , img , desc , price});
 
      res.redirect("/products")
 
@@ -40,7 +39,9 @@ router.get("/products/new", async(req,res)=>{
 
     const {productid} = req.params;
 
-        const product = await Product.findById(productid);
+        const product = await Product.findById(productid).populate("review");
+
+        console.log(product)
 
         res.render("./products/show", {product})
   
@@ -59,7 +60,6 @@ router.get("/products/new", async(req,res)=>{
  })
 
 
-
  //update a product
  router.patch("/products/:productid" , async(req,res)=>{
 
@@ -75,7 +75,6 @@ router.get("/products/new", async(req,res)=>{
  })
 
 
-
  // delete a product
  router.delete("/products/:productid", async(req,res)=>{
 
@@ -87,7 +86,6 @@ router.get("/products/new", async(req,res)=>{
     res.redirect("/products")
 
  })
-
 
 
 module.exports = router;
