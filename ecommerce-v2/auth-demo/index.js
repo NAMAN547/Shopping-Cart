@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const User = require("./models/User")
 const bcrypt = require('bcrypt');
 app.set("view engine", "ejs");
+const session = require("express-session")
 app.set("views", path.join(__dirname, "views"))
 
 
@@ -12,7 +13,27 @@ app.use(express.urlencoded({extended:true}))
 
 mongoose.connect("mongodb://127.0.0.1:27017/authDB")
 .then(()=> console.log("DB CONNECTED"))
-.catch((err)=> console.log(err))
+.catch((err)=> console.log(err));
+
+
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+  }))
+
+
+  let requireLogin = (req,res,next)=>{
+
+    if(!req.session.user_id){
+
+        return res.redirect("/login")
+    }
+
+
+    next();
+
+  }
 
 
 
@@ -56,7 +77,7 @@ app.post("/login", async(req,res)=>{
 
    const {username,password} = req.body;
 
-   const foundUser = await User.find({username});
+   const foundUser = await User.findOne({username});
 
    console.log(foundUser)
 
@@ -66,13 +87,37 @@ app.post("/login", async(req,res)=>{
 
    }
 
+   const validUser = await bcrypt.compare(password , foundUser.hash);
+
+   if(!validUser){
+
+    return res.send("inncorrect password entered")
+
+   }
+
+   req.session.user_id = foundUser._id
+
     return res.redirect("/dashboard")
 
 })
 
-app.get("/dashboard",(req,res)=>{
 
-    res.send(" you have successfully entered dashboard")
+app.get("/logout", (req,res)=>{
+
+    req.session.destroy();
+
+    res.send("please login first")
+
+
+
+
+})
+
+app.get("/dashboard", requireLogin , (req,res)=>{
+
+
+    res.send(" you have successfully entered dashboard");
+
 })
 
 
