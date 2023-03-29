@@ -18,7 +18,6 @@ app.use(express.static(path.join(__dirname, 'public')));
   secret: 'this is a session',
   resave: false,
   saveUninitialized: true,
-  cookie: {}
 };
 
 app.use(session(sessionnew))
@@ -36,6 +35,7 @@ app.get("/user", (req,res)=>{
   const {username} = req.query;
 
   req.session.username = username;
+  console.log(req.session)
 
   res.redirect("/greet")
 

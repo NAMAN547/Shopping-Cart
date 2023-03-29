@@ -4,23 +4,37 @@ const path = require("path")
 const mongoose = require("mongoose");
 const User = require("./models/User")
 const bcrypt = require('bcrypt');
-app.set("view engine", "ejs");
-const session = require("express-session")
-app.set("views", path.join(__dirname, "views"))
+const session = require("express-session");
+const MongoDBStore = require('connect-mongodb-session')(session);
 
-
-app.use(express.urlencoded({extended:true}))
 
 mongoose.connect("mongodb://127.0.0.1:27017/authDB")
 .then(()=> console.log("DB CONNECTED"))
 .catch((err)=> console.log(err));
 
 
+app.set("views", path.join(__dirname, "views"))
+app.set("view engine", "ejs");
+
+
+app.use(express.urlencoded({extended:true}))
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
+    store: new MongoDBStore({
+        uri: 'mongodb://127.0.0.1:27017/authDB',
+        collection: 'mySessions'
+      }),
+
+      cookie: {
+
+        httpOnly:true,
+        maxAge: 7*24*60*60*1000
+
+      }
   }))
+
 
 
   let requireLogin = (req,res,next)=>{
@@ -29,9 +43,7 @@ app.use(session({
 
         return res.redirect("/login")
     }
-
-
-    next();
+ next();
 
   }
 
@@ -121,16 +133,9 @@ app.get("/dashboard", requireLogin , (req,res)=>{
 })
 
 
-
-
-
-
-
 app.listen(5000, ()=>{
 
-    console.log("server running")
-
-
+    console.log("server running");
 
 })
 

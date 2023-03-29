@@ -7,6 +7,9 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const session = require("express-session")
 const flash = require("connect-flash");
+const User = require("./models/User")
+const passport = require("passport");
+var LocalStrategy = require('passport-local');
 
 const sessionflash = {
     secret: 'this is a flash session',
@@ -37,6 +40,10 @@ const productRouter = require("./routes/productRoutes");
 
 const reviewRouter = require("./routes/reviewRoutes")
 
+// Auth router
+
+const authRouter = require("./routes/authRoutes")
+
 
 // Middlewares
 app.use(methodOverride('_method'));
@@ -44,6 +51,13 @@ app.use(express.urlencoded({extended:true}));
 app.engine("ejs", engine)
 app.set("view engine","ejs");
 app.set("views", path.join(__dirname, "views" ))
+
+
+// Passport 
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 
 
@@ -63,6 +77,7 @@ app.get("/", (req,res)=>{
 // Routers
 app.use( productRouter);  // using router
 app.use(reviewRouter);
+app.use(authRouter);
 
 
 
