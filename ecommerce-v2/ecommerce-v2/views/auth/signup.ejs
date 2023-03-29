@@ -1,22 +1,22 @@
 <% layout('./layout/boilerplate') -%>
 
+<div class="border p-3 mx-auto w-50">
 
-<div class="border p-3 mx-auto w-50 mt-5">
-  <h1> Signup</h1>
-  <form action="/register" method="post">
-      <div class="mb-3">
-          <label for="username" class="form-label">UserName</label>
-          <input type="text" name="username" class="form-control" id="username">
-      </div>    
-      <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input type="password" class="form-control" name="password" id="password">
-      </div>   
-      <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
-          <input type="email" class="form-control" name="email" id="email">
-      </div>    
-     
-      <button type="submit" class="btn btn-success btn-sm">Signup</button>
-  </form>
-</div>
+    <h1>Sign Up</h1>
+    <form action="/register" method="post">
+        <div class="mb-3">
+            <label class="form-label" for="username">Username</label>
+            <input class="form-control" type="text" name="username" id="username">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control" type="email" name="email" id="email">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control" type="password" name="password" id="password">
+        </div>
+        <p>Already have an account ? <a href="/login">Login</a></p>
+        <button type="submit" class="btn btn-sm btn-success">Sign Up</button>
+    </form>
+</div

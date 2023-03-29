@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
-const Review = require("../models/Review")
+const Review = require("../models/Review");
+const {isLoggedIn} = require("../middleware")
 
 
 // get all products
@@ -37,13 +38,11 @@ router.get("/products/new", async(req,res)=>{
 
 
  //show a single product
- router.get("/products/:productid", async(req,res)=>{
+ router.get("/products/:productid", isLoggedIn ,  async(req,res)=>{
 
     const {productid} = req.params;
 
         const product = await Product.findById(productid).populate("review");
-
-        console.log(product)
 
 
         res.render("./products/show", {product})
@@ -52,7 +51,7 @@ router.get("/products/new", async(req,res)=>{
 
 
  // get the edit form
- router.get("/products/:productid/edit" , async(req, res)=>{
+ router.get("/products/:productid/edit" ,isLoggedIn, async(req, res)=>{
 
         const {productid} = req.params;
 
@@ -74,12 +73,12 @@ router.get("/products/new", async(req,res)=>{
 
     req.flash("update", "your product has been updated");
 
-   
-
-    res.redirect("/products");
+   res.redirect("/products");
 
 
  })
+
+ 
 
 
  // delete a product

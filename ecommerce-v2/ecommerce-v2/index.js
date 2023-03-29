@@ -11,26 +11,39 @@ const User = require("./models/User")
 const passport = require("passport");
 var LocalStrategy = require('passport-local');
 
+
+//Connect to DB
+mongoose.connect("mongodb://127.0.0.1:27017/shopping-cart")
+.then(()=> console.log(" DB CONNECTED!"))
+.catch((err)=> console.log(err));
+
+
+
 const sessionflash = {
-    secret: 'this is a flash session',
+    secret: 'this is a secret session',
     resave: false,
     saveUninitialized: true,
-    cookie: {}
+    cookie: {
+
+      httpOnly:true,
+      expires: Date.now()  + 7 *24*60*60*1000
+    }
   };
   
   app.use(session(sessionflash))
   app.use(flash());
+  app.use(passport.authenticate('session'));
 
 
-  app.use((req,res,next)=>{
+  app.use((req, res, next) => {
 
-    // res.locals.success = req.flash.success;
-
-    res.locals.successMessage= req.flash("update");
-
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    res.locals.currentUser = req.user;
     next();
 
-  })
+  });
+  
 
 
 // All Product Routes
@@ -51,6 +64,8 @@ app.use(express.urlencoded({extended:true}));
 app.engine("ejs", engine)
 app.set("view engine","ejs");
 app.set("views", path.join(__dirname, "views" ))
+app.use(express.static(path.join(__dirname,'public')))
+
 
 
 // Passport 
@@ -61,12 +76,7 @@ passport.deserializeUser(User.deserializeUser());
 
 
 
-//Connect to DB
-mongoose.connect("mongodb://127.0.0.1:27017/shopping-cart")
-.then(()=> console.log(" DB CONNECTED!"))
-.catch((err)=> console.log(err));
-
-
+//home route
 app.get("/", (req,res)=>{
 
     res.render("index")
@@ -75,7 +85,8 @@ app.get("/", (req,res)=>{
 
 
 // Routers
-app.use( productRouter);  // using router
+
+app.use( productRouter); 
 app.use(reviewRouter);
 app.use(authRouter);
 
