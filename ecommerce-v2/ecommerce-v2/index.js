@@ -1,8 +1,11 @@
+if(process.env.NODE_ENV != "production"){
+
+  require("dotenv").config({ path: "./config.env"})
+}
 const express = require("express");
 const path = require("path")
 const engine = require("ejs-mate")
 const app = express();
-const PORT = 3000;
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const session = require("express-session")
@@ -11,16 +14,22 @@ const User = require("./models/User")
 const passport = require("passport");
 var LocalStrategy = require('passport-local');
 
+const dbUrl = process.env.DB_URI
+
+
+const port = process.env.PORT || 8080
+
+const sessionSecret = process.env.SESSION_SECRET || 'this is a secret session'
 
 //Connect to DB
-mongoose.connect("mongodb://127.0.0.1:27017/shopping-cart")
+mongoose.connect(dbUrl, { useNewUrlParser: true,useUnifiedTopology: true })
 .then(()=> console.log(" DB CONNECTED!"))
 .catch((err)=> console.log(err));
 
 
 
 const sessionflash = {
-    secret: 'this is a secret session',
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -92,7 +101,7 @@ app.use(authRouter);
 
 
 
-app.listen(PORT, ()=>{
+app.listen(port, ()=>{
 
-    console.log(` server running at port ${PORT}`)
+    console.log(` server running at port ${port}`)
 })

@@ -1,11 +1,11 @@
-
+const {dbUrl} = require("./index")
 const mongoose = require("mongoose");
 const Product = require("./models/Product")
 
-mongoose.set('strictQuery', true);
-mongoose.connect("mongodb://127.0.0.1:27017/shopping-cart")
+mongoose.connect(dbUrl, { useNewUrlParser: true,useUnifiedTopology: true })
 .then(()=> console.log(" DB CONNECTED!"))
 .catch((err)=> console.log(err));
+
 
 
 const products = [
